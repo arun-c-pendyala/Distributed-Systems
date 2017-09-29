@@ -198,7 +198,7 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                         return newuri;
                     }
-                    Log.i("last else in insert:","insert in minimum node");
+                   
 
 
                     Log.v("insert", cv.toString());
@@ -214,13 +214,13 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                 String key_part = values.get(KEY_FIELD).toString();
                 String value_part = values.get(VALUE_FIELD).toString();
-                Log.i("Inside else@@@@@@@@@:",value_part);
+               
 
                 if(value_part.charAt(value_part.length()-1) == '{'){
 
                     value_part = value_part.substring(0,value_part.length()-1);   // remove { at the end
 
-                    Log.i("Inside else*******:",value_part);
+                    
 
                     ContentValues cv = new ContentValues();
 
@@ -438,22 +438,10 @@ public class SimpleDynamoProvider extends ContentProvider {
             }
 
 
-
-
-
-
-
             MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, c });
 
 
             return mergeCursor;
-
-
-
-
-
-
-
 
         }
         else if(selection.charAt(selection.length()-1) =='+'){
@@ -469,12 +457,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                     null,
                     sortOrder);
             Log.i("I'm in +","ok");
-
-
-
-
-
-
 
 
         }
@@ -722,18 +704,10 @@ public class SimpleDynamoProvider extends ContentProvider {
                                     star_cursor.moveToNext();
 
 
-
-
-
-
                                 }
 
 
                             }
-
-
-
-
 
 
                             try {
@@ -966,11 +940,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
 
 
-
-
-
-
-
                             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
                             out.println(msgToSend);
@@ -1013,9 +982,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
 
                     }
-
-
-
 
 
                 }
@@ -1079,16 +1045,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                         }
 
 
-
-
-
-
-
-
-
-
-
-
                     } catch (IOException e) {
                         Log.e(TAG, "not able to send messages");
                     }
@@ -1128,14 +1084,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                             Log.i("The node is dead",port_to_send);
                             return null;
                         }
-
-
-
-
-
-
-
-
 
 
 
@@ -1228,12 +1176,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
 
                             }
-
-
-
-
-
-
 
                         } catch (IOException e) {
                             Log.e(TAG, "not able to send messages");
