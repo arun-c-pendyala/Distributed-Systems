@@ -297,15 +297,7 @@ public class GroupMessengerActivity extends Activity {
         }
 
 
-
-
-
-
-
     }
-
-
-
 
 
 
