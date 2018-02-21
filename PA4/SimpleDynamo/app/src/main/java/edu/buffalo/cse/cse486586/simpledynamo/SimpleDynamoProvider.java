@@ -56,7 +56,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
     Uri uri = buildUri("content", "edu.buffalo.cse.cse486586.simpledynamo.provider");
 
-
     private SQLiteDatabase db;
     private SQLiteDatabase mdb;
     private DictOpenHelper dictOpenHelper;
@@ -86,8 +85,6 @@ public class SimpleDynamoProvider extends ContentProvider {
             //db.delete(DB_TABLE_NAME, null, null);
             db.execSQL(DB_TABLE_CREATE);
 
-
-
         }
 
 
@@ -97,9 +94,7 @@ public class SimpleDynamoProvider extends ContentProvider {
             //CopyNewDatabaseFromAsset();
             db.execSQL("DROP TABLE IF EXISTS" + DB_TABLE_NAME);
             onCreate(db);
-
-
-        }
+         }
 
     }
 
@@ -146,8 +141,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
         int myPort_index = present_nodes.indexOf(myPort);
 
-
-
         try{
             Log.i("MyPort----->",myPort);
             Log.i("key in values in insert",values.get("key").toString());
@@ -176,8 +169,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                     Log.v("Inside insert()","Forward the values to next node::" + valuesToBeSent);
 
-
-
                 }
                 else{
 
@@ -199,8 +190,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                         return newuri;
                     }
                    
-
-
                     Log.v("insert", cv.toString());
                     return uri;
 
@@ -211,16 +200,12 @@ public class SimpleDynamoProvider extends ContentProvider {
 
             else{
 
-
                 String key_part = values.get(KEY_FIELD).toString();
                 String value_part = values.get(VALUE_FIELD).toString();
                
-
                 if(value_part.charAt(value_part.length()-1) == '{'){
 
                     value_part = value_part.substring(0,value_part.length()-1);   // remove { at the end
-
-                    
 
                     ContentValues cv = new ContentValues();
 
@@ -237,12 +222,8 @@ public class SimpleDynamoProvider extends ContentProvider {
                         return newuri;
                     }
 
-
-
                     Log.v("insert", values.toString());
                     return uri;
-
-
 
                 }
                 else{     // forward the values to the correct node
@@ -254,19 +235,11 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                 }
 
-
             }
-
-
 
         }catch (NoSuchAlgorithmException e){
             Log.e("Inside insert() :", "Error in gen hash");
         }
-
-
-
-
-
 
         return uri;
     }
@@ -285,8 +258,6 @@ public class SimpleDynamoProvider extends ContentProvider {
         for(String port : REMOTE_PORT){
 
             present_nodes.add(port);                   // add all 5 nodes
-
-
 
         }
 
@@ -317,9 +288,6 @@ public class SimpleDynamoProvider extends ContentProvider {
             ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
             new ServerTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, serverSocket);
 
-
-
-
         } catch (IOException e) {
             /*
              * Log is a good way to debug your code. LogCat prints out all the messages that
@@ -334,7 +302,6 @@ public class SimpleDynamoProvider extends ContentProvider {
         }
 
         new ClientTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "node is back" , myPort);
-
 
         return false;
     }
@@ -368,9 +335,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                     null,
                     sortOrder);
 
-
-
-
         }
         else if(selection.equals("*")){  // get all key, value pairs in all nodes
 
@@ -385,14 +349,11 @@ public class SimpleDynamoProvider extends ContentProvider {
 
             MatrixCursor matrixCursor = new MatrixCursor(new String[]{KEY_FIELD,VALUE_FIELD});    // source: http://stackoverflow.com/questions/9917935/adding-rows-into-cursor-manually
 
-
             //sending query request to all nodes as all^portnumber
 
             for(int i=0; i< present_nodes.size();i++){
 
                 if(!myPort.equals(present_nodes.get(i))){
-
-
 
                     String all_request = "all"+ "," + present_nodes.get(i);
 
@@ -410,13 +371,9 @@ public class SimpleDynamoProvider extends ContentProvider {
                                 String res_value = kv_parts[1];
                                 matrixCursor.addRow(new String[]{res_key , res_value} );
 
-
                             }
 
                         }
-
-
-
 
                     }catch (InterruptedException e) {
 
@@ -430,16 +387,11 @@ public class SimpleDynamoProvider extends ContentProvider {
                         Log.i("Null pointer","dead node");
                     }
 
-
-
                 }
-
 
             }
 
-
             MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, c });
-
 
             return mergeCursor;
 
@@ -467,8 +419,6 @@ public class SimpleDynamoProvider extends ContentProvider {
             Log.v("search the range",sel);
             Log.v("received_nodes",present_nodes.toString());
 
-
-
             String gen_query = "";
             String sel_str_sent = "";
 
@@ -484,17 +434,12 @@ public class SimpleDynamoProvider extends ContentProvider {
             sel_str_sent = selection + "&" + node_found;
             c = null;
 
-
-
-
             //send query request to the minimum node or the required node.
             try {
 
 
-
                 String received_str;
                 Log.i("Sending query request",node_found);
-
 
                 try{
                     received_str = new ClientTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, sel_str_sent, myPort).get();
@@ -508,8 +453,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                     received_str = new ClientTask().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, new_sel_str_sent, myPort).get();
                     Log.i("Received query res ", "--exception case: " + received_str);
 
-
-
                 }
 
                 // received_str has ~ in  between key and value
@@ -519,10 +462,7 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                 matrixCursor.setNotificationUri(getContext().getContentResolver(), uri);
 
-
                 return matrixCursor;
-
-
 
             } catch (InterruptedException e) {
 
@@ -536,11 +476,8 @@ public class SimpleDynamoProvider extends ContentProvider {
 
         }
 
-
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
-
-
 
     }
 
@@ -581,8 +518,6 @@ public class SimpleDynamoProvider extends ContentProvider {
              */
             try {
 
-
-
                 String strin;   //based on https://docs.oracle.com/javase/tutorial/networking/sockets/ and android doc
 
                 while(true) {
@@ -617,9 +552,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                                 Log.e(TAG, "not able to send messages :: ack ");
                             }
 
-
-
-
                         }
                         else if(strin.contains("!")){
 
@@ -647,12 +579,7 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                             Log.i("res_to_Send", res_to_send);
 
-
-
                             try {
-
-
-
 
                                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
@@ -670,17 +597,11 @@ public class SimpleDynamoProvider extends ContentProvider {
                             }
                             socket.close();
 
-
-
-
                         }
                         else if(strin.equals("all")){
 
-
-
                             String select = "@";
                             Cursor star_cursor = query(uri,null,select,null,null);
-
 
                             String temp_result = "";
                             String out_strin = "";
@@ -703,12 +624,9 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                                     star_cursor.moveToNext();
 
-
                                 }
 
-
                             }
-
 
                             try {
 
@@ -720,7 +638,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                                     out.println(final_out);
                                     out.flush();
                                     star_cursor.close();
-
 
                                     Log.i("Query: Sending ","final_out" + final_out);
 
@@ -734,15 +651,10 @@ public class SimpleDynamoProvider extends ContentProvider {
                                     out.flush();
                                     star_cursor.close();
 
-
                                     Log.i("Query: Sending ","final_out" + "no rows");
 
 
                                 }
-
-
-
-
                             } catch (IOException e) {
                                 Log.e(TAG, "not able to send messages");
                             }
@@ -750,14 +662,8 @@ public class SimpleDynamoProvider extends ContentProvider {
 
 
 
-
-
-
-
                         }
                         else if(strin.equals("node is back")){  // send the saved messages to recovered port
-
-
 
                             try{
 
@@ -767,15 +673,11 @@ public class SimpleDynamoProvider extends ContentProvider {
                                 if(failed_msgs.size()!=0){  //send saved messages to recovered node
 
 
-
-
-
                                     String saved_string = "";
 
                                     for(int i =0 ; i < failed_msgs.size(); i++){
 
                                         saved_string = saved_string + ":" +failed_msgs.get(i);
-
 
                                     }
 
@@ -795,10 +697,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                                 }
 
-
-
-
-
                             }
                             catch(Exception e){
                                 Log.e(TAG, "not able to send messages :: socket");
@@ -817,7 +715,6 @@ public class SimpleDynamoProvider extends ContentProvider {
             catch(IOException e){
                 Log.e(TAG, "not able to receive messages");
             }
-
 
             return null;
         }
@@ -865,9 +762,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                         Socket socket = new Socket(InetAddress.getByAddress(new byte[]{10, 0, 2, 2}),
                                 Integer.parseInt(port_to_send));
 
-
-
-
                         String msgToSend = key_value + "{" ; // to insert in the next n-1 nodes and correct node
 
                         Log.i("Sending"+ msgToSend , "to" + port_to_send);
@@ -899,13 +793,7 @@ public class SimpleDynamoProvider extends ContentProvider {
                                 failed_port = port_to_send;
                                 failed_msgs.add(msgToSend);
 
-
-
                             }
-
-
-
-
 
                         } catch (IOException e) {
                             Log.e(TAG, "not able to send messages :: failure handling");
@@ -913,9 +801,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                         socket.close();
 
                     }
-
-
-
 
                 }
                 else if(msgs[0].contains("#")&& msgs[0].contains("$")){
@@ -938,15 +823,10 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                         try {  // failure handling while sending to minimum node
 
-
-
                             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
                             out.println(msgToSend);
                             out.flush();
-
-
-
 
                             try{
 
@@ -967,22 +847,14 @@ public class SimpleDynamoProvider extends ContentProvider {
                                 failed_port = port_to_Send;
                                 failed_msgs.add(msgToSend);
 
-
-
                             }
-
-
-
 
                         } catch (IOException e) {
                             Log.e(TAG, "not able to send messages :: min node - fail handling");
                         }
                         socket.close();
 
-
-
                     }
-
 
                 }
                 else if(msgs[0].contains("&")  ){
@@ -1011,14 +883,10 @@ public class SimpleDynamoProvider extends ContentProvider {
                         try{
 
 
-
                             res_string = client_in.readLine();
                             Log.i("Got res_string as:",res_string);
 
-
                             return res_string;
-
-
 
                         }catch(Exception e){
                             socket.close();
@@ -1093,17 +961,11 @@ public class SimpleDynamoProvider extends ContentProvider {
                     }
                     socket.close();
 
-
-
-
-
-
                 }
                 else if (msgs[0].equals("node is back")){  // send the message as such esp "Node is back"
 
 
                     for(String port_to_Send : REMOTE_PORT){
-
 
                         if(port_to_Send.equals(myPort)){
                             continue;    // send the message to all except itself
@@ -1116,8 +978,6 @@ public class SimpleDynamoProvider extends ContentProvider {
 
                         String msgToSend = msgs[0] ;
 
-
-
                         try {
 
 
@@ -1127,8 +987,6 @@ public class SimpleDynamoProvider extends ContentProvider {
                             out.flush();
 
                             BufferedReader client_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-
 
                             String str;
 
@@ -1164,16 +1022,12 @@ public class SimpleDynamoProvider extends ContentProvider {
                                         insert(uri,cv);
                                     }
 
-
-
                                 }
                                 else{
 
                                     Log.e("Got"+ str ,"from" + port_to_Send);
 
                                 }
-
-
 
                             }
 
@@ -1182,14 +1036,9 @@ public class SimpleDynamoProvider extends ContentProvider {
                         }
                         socket.close();
 
-
-
                     }
 
-
-
                 }
-
 
             } catch (UnknownHostException e) {
                 Log.e(TAG, "ClientTask UnknownHostException");
@@ -1216,7 +1065,6 @@ public class SimpleDynamoProvider extends ContentProvider {
             }catch(NoSuchAlgorithmException e){
                 Log.e("error in:","hashed_nodes");
             }
-
 
         }
         return hashed_output;
